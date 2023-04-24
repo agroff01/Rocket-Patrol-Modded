@@ -70,7 +70,7 @@ class Play extends Phaser.Scene {
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
         
         // display High Score
-        this.scoreRight = this.add.text(game.config.width - (borderUISize + borderPadding + scoreConfig.fixedWidth), borderUISize + borderPadding*2, highScore, scoreConfig);
+        this.scoreRight = this.add.text(game.config.width - (borderUISize + borderPadding + scoreConfig.fixedWidth), borderUISize + borderPadding*2, 'HS:' + highScore, scoreConfig);
 
         // game over flag
         this.gameOver = false;
@@ -154,7 +154,7 @@ class Play extends Phaser.Scene {
 
         if (this.p1Score > highScore) {
             highScore = this.p1Score;
-            this.scoreRight.text = highScore;
+            this.scoreRight.text = 'HS:' + highScore;
         }
 
         this.sound.play('sfx_explosion');
