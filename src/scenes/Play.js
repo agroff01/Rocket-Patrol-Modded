@@ -7,6 +7,7 @@ class Play extends Phaser.Scene {
         //load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
+        this.load.image('starSpeeder', './assets/starSpeeder.png');
         this.load.image('starfield', './assets/starfield.png');
 
         // load spritesheet
@@ -35,7 +36,7 @@ class Play extends Phaser.Scene {
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
 
         // add starSpeeder
-        this.speeder01 = new Spaceship(this, game.config.width + borderUISize*4, borderUISize*6, 'spaceship', 0, 50, 5).setOrigin(0,0);
+        this.speeder01 = new Spaceship(this, game.config.width + borderUISize*4, borderUISize*6, 'starSpeeder', 0, 50, 5).setOrigin(0,0);
 
         // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
@@ -67,6 +68,9 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        
+        // display High Score
+        this.scoreRight = this.add.text(game.config.width - (borderUISize + borderPadding + scoreConfig.fixedWidth), borderUISize + borderPadding*2, highScore, scoreConfig);
 
         // game over flag
         this.gameOver = false;
@@ -147,6 +151,11 @@ class Play extends Phaser.Scene {
         // score add and repaint
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
+
+        if (this.p1Score > highScore) {
+            highScore = this.p1Score;
+            this.scoreRight.text = highScore;
+        }
 
         this.sound.play('sfx_explosion');
       }
