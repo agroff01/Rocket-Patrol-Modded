@@ -28,6 +28,9 @@ class Rocket extends Phaser.GameObjects.Sprite {
                 if (this.angle <= 30) this.angle++;
                 this.x += this.moveSpeed * this.rotation * 3;
                 
+            } else if (!keyLEFT.isDown && !keyRIGHT.isDown) {
+                if (this.angle < 0) this.angle += 1;
+                else if (this.angle > 0) this.angle -= 1;
             }
             console.log(this.rotation);
         }
