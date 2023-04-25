@@ -22,7 +22,6 @@ class Rocket extends Phaser.GameObjects.Sprite {
             if(keyLEFT.isDown && this.x >= borderUISize + this.width) {
                 if (this.angle >= -30) this.angle--;
                 this.x += this.moveSpeed * this.rotation * 3;
-
                 
             } else if (keyRIGHT.isDown && this.x <= game.config.width - borderUISize - this.width) {
                 if (this.angle <= 30) this.angle++;
@@ -32,7 +31,11 @@ class Rocket extends Phaser.GameObjects.Sprite {
                 if (this.angle < 0) this.angle += 1;
                 else if (this.angle > 0) this.angle -= 1;
             }
-            console.log(this.rotation);
+            // bound movement past right wall
+            if (this.x > game.config.width - borderUISize - this.width) this.x = game.config.width - borderUISize - this.width;
+
+            // bound movement past left wall
+            if (this.x < borderUISize + this.width) this.x = borderUISize + this.width;
         }
 
         

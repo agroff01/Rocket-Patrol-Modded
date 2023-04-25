@@ -72,6 +72,22 @@ class Play extends Phaser.Scene {
         // display High Score
         this.scoreRight = this.add.text(game.config.width - (borderUISize + borderPadding + scoreConfig.fixedWidth), borderUISize + borderPadding*2, 'HS:' + highScore, scoreConfig);
 
+        // display timer
+        let timerConfig = {
+            fontFamily: 'Courier',
+            fontSize: '36px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'center',
+            padding: {
+            top: 10,
+            bottom: 10,
+            },
+            fixedWidth: 100
+        }
+        this.timeLeft = game.settings.gameTimer / 1000;
+        this.timerText = this.add.text(game.config.width/2 - timerConfig.fixedWidth/2, borderUISize + borderPadding*1.5, this.timeLeft, timerConfig);
+
         // game over flag
         this.gameOver = false;
 
@@ -86,6 +102,10 @@ class Play extends Phaser.Scene {
 
 
     update() {
+
+        // update timer
+        this.timerText.text = Math.floor((this.clock.getRemaining())/1000);
+        //console.log(game.settings.gameTimer + "   " + this.clock.getRemaining());
 
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
