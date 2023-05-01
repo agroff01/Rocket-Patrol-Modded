@@ -52,7 +52,7 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
-        if (Phaser.Input.Keyboard.JustDown(keyLEFT) && Phaser.Input.Keyboard.DownDuration(keyLEFT, 10)) {
+        if (Phaser.Input.Keyboard.DownDuration(keyLEFT, 25)) {
           // easy mode
           game.settings = {
             spaceshipSpeed: 3,
@@ -61,7 +61,7 @@ class Menu extends Phaser.Scene {
           this.sound.play('sfx_select');
           this.scene.start('playScene');    
         }
-        if (Phaser.Input.Keyboard.JustDown(keyRIGHT) && Phaser.Input.Keyboard.DownDuration(keyRIGHT, 10)) {
+        if (Phaser.Input.Keyboard.DownDuration(keyRIGHT, 25)) {
           // hard mode
           game.settings = {
             spaceshipSpeed: 4,
@@ -71,13 +71,15 @@ class Menu extends Phaser.Scene {
           this.sound.play('sfx_select');
           this.scene.start('playScene');    
         }
-        if (Phaser.Input.Keyboard.JustDown(key1)){
+        if (Phaser.Input.Keyboard.JustDown(key1) && this.game.isTwoPlayers == true){
           this.game.isTwoPlayers = false;
           this.playerCountText.text = "Currently 1 Player";
+          this.sound.play('sfx_select');
         }
-        if (Phaser.Input.Keyboard.JustDown(key2)){
+        if (Phaser.Input.Keyboard.JustDown(key2) && this.game.isTwoPlayers == false){
           this.game.isTwoPlayers = true;
           this.playerCountText.text = "Currently 2 Players";
+          this.sound.play('sfx_select');
         }
     }
 
