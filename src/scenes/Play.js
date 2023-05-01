@@ -154,7 +154,7 @@ class Play extends Phaser.Scene {
         this.timerText.text = Math.floor((this.clock.getRemaining())/1000);
 
         // check key input for restart
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+        if (this.gameOver && Phaser.Input.Keyboard.DownDuration(keyR, 50)) {
             if (game.isTwoPlayers && !playerTwoActive){}
             else {
                 p1Score = 0;
@@ -164,7 +164,7 @@ class Play extends Phaser.Scene {
             }
         }
 
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+        if (this.gameOver && Phaser.Input.Keyboard.DownDuration(keyLEFT, 50)) {
             if (game.isTwoPlayers && !playerTwoActive){}
             else {
                 this.scene.start("menuScene");
