@@ -52,7 +52,7 @@ class Play extends Phaser.Scene {
         this.ship03 = new Spaceship(this, game.config.width, randomNumber(borderUISize*4, game.config.height - borderUISize*3 - borderPadding), 'spaceship', 0, 10).setOrigin(0,0);
         
         // add starSpeeder
-        this.speeder01 = new Spaceship(this, game.config.width + borderUISize*4, borderUISize*6, 'starSpeeder', 0, 50, 5).setOrigin(0,0);
+        this.speeder01 = new Spaceship(this, game.config.width + borderUISize*4, randomNumber(borderUISize*4, borderUISize*8), 'starSpeeder', 0, 50, 5).setOrigin(0,0);
 
         // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
