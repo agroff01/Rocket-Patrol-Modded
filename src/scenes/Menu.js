@@ -32,12 +32,22 @@ class Menu extends Phaser.Scene {
         this.add.text(game.config.width/2, game.config.height/2, 'Use ←→ arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice and → for Expert', menuConfig).setOrigin(0.5);
+        menuConfig.fontSize = '20px';
+        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'First press "1" for 1-player and "2" for 2-players', menuConfig).setOrigin(0.5);
+        this.playerCountText = this.add.text(game.config.width/2, game.config.height/2 + borderUISize*2 + borderPadding, 'Currently 1 Player', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + borderUISize*3 + borderPadding, 'Then press ← for Novice and → for Expert', menuConfig).setOrigin(0.5);
 
 
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        key1 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        key2 = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+
+        game.isTwoPlayers = false;
+        p1Score = 0;
+        p2Score = 0;  
+
                 
     }
 
@@ -57,10 +67,19 @@ class Menu extends Phaser.Scene {
             spaceshipSpeed: 4,
             gameTimer: 45000    
           }
+          //console.log("has two players:" + this.game.isTwoPlayers); 
           this.sound.play('sfx_select');
           this.scene.start('playScene');    
         }
-      }
+        if (Phaser.Input.Keyboard.JustDown(key1)){
+          this.game.isTwoPlayers = false;
+          this.playerCountText.text = "Currently 1 Player";
+        }
+        if (Phaser.Input.Keyboard.JustDown(key2)){
+          this.game.isTwoPlayers = true;
+          this.playerCountText.text = "Currently 2 Players";
+        }
+    }
 
 }
 

@@ -46,9 +46,9 @@ class Play extends Phaser.Scene {
             max -= min;
             return Math.floor(Math.random() * max) + min;
         }        
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, randomNumber(borderUISize*4, game.config.height - borderUISize*2 - borderPadding), 'spaceship', 0, 30).setOrigin(0,0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, randomNumber(borderUISize*4, game.config.height - borderUISize*2 - borderPadding), 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, randomNumber(borderUISize*4, game.config.height - borderUISize*2 - borderPadding), 'spaceship', 0, 10).setOrigin(0,0);
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, randomNumber(borderUISize*4, game.config.height - borderUISize*3 - borderPadding), 'spaceship', 0, 30).setOrigin(0,0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, randomNumber(borderUISize*4, game.config.height - borderUISize*3 - borderPadding), 'spaceship', 0, 20).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, randomNumber(borderUISize*4, game.config.height - borderUISize*3 - borderPadding), 'spaceship', 0, 10).setOrigin(0,0);
         
         // add starSpeeder
         this.speeder01 = new Spaceship(this, game.config.width + borderUISize*4, borderUISize*6, 'starSpeeder', 0, 50, 5).setOrigin(0,0);
@@ -66,23 +66,26 @@ class Play extends Phaser.Scene {
             frameRate: 30
         });
 
-        // initialize score
-        this.p1Score = 0;
-
+        
         // display score
         let scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
             backgroundColor: '#F3B141',
             color: '#843605',
-            align: 'right',
+            align: 'left',
             padding: {
             top: 5,
             bottom: 5,
             },
             fixedWidth: 100
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, p1Score, scoreConfig);
+        if (this.game.isTwoPlayers){
+            console.log("Has 2 players");
+            this.p1ScoreText.text = "P1: " + p1Score;
+            this.p2ScoreText = this.add.text(game.config.width/4, borderUISize + borderPadding*2, "P2: " + p2Score, scoreConfig);
+        }
         
         // display High Score
         this.scoreRight = this.add.text(game.config.width - (borderUISize + borderPadding + scoreConfig.fixedWidth), borderUISize + borderPadding*2, 'HS:' + highScore, scoreConfig);
@@ -116,18 +119,24 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 70
         }
-        this.fireText = this.add.text(game.config.width/4 + borderPadding, borderUISize + borderPadding*2, "FIRE", fireConfig);
+        this.fireText = this.add.text((game.config.width/3)*2 - borderPadding*2, borderUISize + borderPadding*2, "FIRE", fireConfig);
         this.fireText.alpha = 0;
 
-        // game over flag
+        // flags
         this.gameOver = false;
 
         // 60 sec play clock
         scoreConfig.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
-            this.gameOver = true;
+            if (game.isTwoPlayers && !playerTwoActive) {
+                this.countdown = this.time.delayedCall(5000, () => {playerTwoActive = true; this.scene.restart()}, null, this);
+                this.p2CoutdownText = this.add.text(game.config.width/2, game.config.height/2, "Player Two Starts In... 5", scoreConfig).setOrigin(0.5);
+                this.gameOver = true;
+            } else {
+                this.add.text(game.config.width/2, game.config.height/2, "GAME OVER", scoreConfig).setOrigin(0.5);
+                this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
+                this.gameOver = true;
+            }
         }, null, this);
 
         // particle emmiter declaration
@@ -137,16 +146,30 @@ class Play extends Phaser.Scene {
 
     update() {
 
+        // update p2coutdown
+        if (game.isTwoPlayers && !playerTwoActive && this.gameOver) {
+            this.p2CoutdownText.text = "Player 2 Starts In... " + Math.floor((this.countdown.getRemaining())/1000);
+        }
+
         // update timer
         this.timerText.text = Math.floor((this.clock.getRemaining())/1000);
 
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            this.scene.restart();
+            if (game.isTwoPlayers && !playerTwoActive){}
+            else {
+                p1Score = 0;
+                p2Score = 0;  
+                this.scene.restart();
+            }
         }
 
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            this.scene.start("menuScene");
+            if (game.isTwoPlayers && !playerTwoActive){}
+            else {
+                this.scene.start("menuScene");
+            }
+            
         }
 
         this.starfield.tilePositionX -= 4;
@@ -208,12 +231,22 @@ class Play extends Phaser.Scene {
         });       
 
         // score add and repaint
-        this.p1Score += ship.points;
-        this.scoreLeft.text = this.p1Score;
+        if (playerTwoActive) {
+            p2Score += ship.points;
+            this.p2ScoreText.text = "P2:" + p2Score;
 
-        if (this.p1Score > highScore) {
-            highScore = this.p1Score;
-            this.scoreRight.text = 'HS:' + highScore;
+            if (p2Score > highScore) {
+                highScore = p2Score;
+                this.scoreRight.text = 'HS:' + highScore;
+            }
+        } else {
+            p1Score += ship.points;
+            this.p1ScoreText.text = "P1:" + p1Score;
+
+            if (p1Score > highScore) {
+                highScore = p1Score;
+                this.scoreRight.text = 'HS:' + highScore;
+            }
         }
 
         this.sound.play('sfx_explosion');

@@ -8,10 +8,13 @@ let config = {
 let game = new Phaser.Game(config);
 
 //reserve keyboard vars
-let keyF, keyR, keyLEFT, keyRIGHT;
+let keyF, keyR, keyLEFT, keyRIGHT, key1, key2;
 
 // persistant high score
 let highScore = 0;
+let p1Score = 0;
+let p2Score = 0;
+let playerTwoActive = false;
 
 //set UI
 let borderUISize = game.config.height / 15;
