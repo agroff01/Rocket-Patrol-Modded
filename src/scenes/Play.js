@@ -9,8 +9,9 @@ class Play extends Phaser.Scene {
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starSpeeder', './assets/starSpeeder.png');
         this.load.image('starfield', './assets/starfield.png');
-        this.load.image('starfieldParalax1', './assets/starfield2.png')
+        this.load.image('starfieldParalax1', './assets/starfield2.png');
         this.load.image('starfieldParalax2', './assets/starfield3.png');
+        this.load.image('shipFragment', './assets/shipFragment.png');
 
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -138,9 +139,7 @@ class Play extends Phaser.Scene {
                 this.gameOver = true;
             }
         }, null, this);
-
-        // particle emmiter declaration
-        // let hitParticleEmitter = new ParticleEmitter({this, 'scraps'}, {});
+        
     }
 
 
@@ -189,20 +188,20 @@ class Play extends Phaser.Scene {
 
         // check collisions
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
-            this.p1Rocket.reset();
             this.shipExplode(this.ship03);
+            this.p1Rocket.reset();
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
-            this.p1Rocket.reset();
             this.shipExplode(this.ship02);
+            this.p1Rocket.reset();
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
-            this.p1Rocket.reset();
             this.shipExplode(this.ship01);
+            this.p1Rocket.reset();
         }
         if (this.checkCollision(this.p1Rocket, this.speeder01)) {
-            this.p1Rocket.reset();
             this.shipExplode(this.speeder01);
+            this.p1Rocket.reset();
         }
     }
 
@@ -221,6 +220,10 @@ class Play extends Phaser.Scene {
     shipExplode(ship) {
         // temporarily hide ship
         ship.alpha = 0;
+        let hitPosX = this.p1Rocket.x;
+        let hitPosY = this.p1Rocket.y;
+
+
         // create explosion sprite at ship's position
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
         boom.anims.play('explode');             // play explode animation
@@ -228,7 +231,16 @@ class Play extends Phaser.Scene {
           ship.reset();                         // reset ship position
           ship.alpha = 1;                       // make ship visible again
           boom.destroy();                       // remove explosion sprite
-        });       
+        });
+
+          
+        // particle emmiter declaration
+        this.shipParticle = this.add.particles(hitPosX, hitPosY, 'shipFragment', {
+            speed: 80,
+            lifespan: 500,
+            maxParticles: 5,
+            gravityY: 100
+        }); 
 
         // score add and repaint
         if (playerTwoActive) {
