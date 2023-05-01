@@ -84,8 +84,8 @@ class Play extends Phaser.Scene {
         this.p1ScoreText = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, p1Score, scoreConfig);
         if (this.game.isTwoPlayers){
             console.log("Has 2 players");
-            this.p1ScoreText.text = "P1: " + p1Score;
-            this.p2ScoreText = this.add.text(game.config.width/4, borderUISize + borderPadding*2, "P2: " + p2Score, scoreConfig);
+            this.p1ScoreText.text = "P1:" + p1Score;
+            this.p2ScoreText = this.add.text(game.config.width/4, borderUISize + borderPadding*2, "P2:" + p2Score, scoreConfig);
         }
         
         // display High Score
@@ -145,7 +145,7 @@ class Play extends Phaser.Scene {
 
     update() {
 
-        // update p2coutdown
+        // update p2coutdown so p2 has time to get hands on controls
         if (game.isTwoPlayers && !playerTwoActive && this.gameOver) {
             this.p2CoutdownText.text = "Player 2 Starts In... " + Math.floor((this.countdown.getRemaining())/1000);
         }
@@ -158,7 +158,8 @@ class Play extends Phaser.Scene {
             if (game.isTwoPlayers && !playerTwoActive){}
             else {
                 p1Score = 0;
-                p2Score = 0;  
+                p2Score = 0;
+                playerTwoActive = false;
                 this.scene.restart();
             }
         }
